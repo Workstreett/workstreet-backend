@@ -1,0 +1,5 @@
+# ignoring the dependencies
+node_modules/
+
+# ignore the process.env file
+*.env
