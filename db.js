@@ -9,7 +9,9 @@ const pool = new Pool({
 	port: process.env.db_port,
 });
 
-pool.query("SELECT * from users", (err, res) => {
-	console.log(err, res);
-	pool.end();
-});
+// pool.query("SELECT * from users", (err, res) => {
+// 	console.log(err, res);
+// 	pool.end();
+// });
+
+module.exports = pool;

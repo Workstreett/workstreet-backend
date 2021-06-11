@@ -11,7 +11,7 @@ api.get("/", (req, res) => {
 	);
 });
 
-api.post("/signup", (req, res) => {
+api.post("/login", (req, res) => {
 	// The given data includes username, password, confirm, name, branch, year, email, institute....
 	const { username, password, name, branch, year, email, institute } =
 		req.body;
