@@ -4,11 +4,13 @@ require("dotenv").config();
 let userDetail = {};
 const isUsernameValid = async (username) => {
 	try {
-		let res = await pool.query("SELECT * FROM users where username = $1", [
+		//change table name accordingly
+		let res = await pool.query("SELECT * FROM wk_table where username = $1", [
 			username,
 		]);
 		console.log(res);
 		userDetail = res.rows[0];
+		
 		if (userDetail.user_id == undefined) {
 			return true;
 		} else {
@@ -18,6 +20,7 @@ const isUsernameValid = async (username) => {
 		throw Error("Sorry the database can't be connected right now");
 	}
 };
+
 const hashPassword = (passwd) => {
 	passwd += process.env.passwd_salt;
 	passwd = Buffer.from(passwd).toString("base64");
@@ -30,6 +33,7 @@ const test = async () => {
 	if (valid) {
 		console.log("Username is not in the database");
 	} else {
+		console.log("Username exists choose another one");
 		console.log(userDetail);
 	}
 };
