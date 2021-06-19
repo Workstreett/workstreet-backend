@@ -1,21 +1,16 @@
 const pool = require("./db");
+const fs = require("fs");
 require("dotenv").config();
 
-let userDetail = {};
 const isUsernameValid = async (username) => {
 	try {
 		//change table name accordingly
-		let res = await pool.query("SELECT * FROM wk_table where username = $1", [
+		let res = await pool.query("SELECT * FROM users where username = $1", [
 			username,
 		]);
-		console.log(res);
-		userDetail = res.rows[0];
-		
-		if (userDetail.user_id == undefined) {
-			return true;
-		} else {
-			return false;
-		}
+		// console.log(res);
+		await pool.end();
+		return res.rows[0];
 	} catch (err) {
 		throw Error("Sorry the database can't be connected right now");
 	}
@@ -28,15 +23,36 @@ const hashPassword = (passwd) => {
 	return hashedPsswd;
 };
 
+const searchForDomain = async (filename, domain) => {
+	var domains = [];
+	domains = fs.readFileSync(filename, "utf-8").toString().split("\r\n");
+	for (let i = 0; i < domains.length; i++) {
+		if (domains[i].localeCompare(domain) === 0) return true;
+	}
+	return false;
+};
+
+const isMaildValid = async (mailId) => {
+	let ind = mailId.indexOf("@");
+	if (ind == -1) return false;
+	mailId = mailId.substring(ind);
+	let found = await searchForDomain("./mail_data/IIT_Domains.txt", mailId);
+	if (found == true) return true;
+	found = await searchForDomain("./mail_data/IIIT Domain.txt", mailId);
+	if (found == true) return true;
+	found = await searchForDomain("./mail_data/NIT Domain.txt", mailId);
+	return found;
+};
+
 const test = async () => {
-	valid = await isUsernameValid("pradeopsh2203");
-	if (valid) {
-		console.log("Username is not in the database");
+	var valid = await isUsernameValid("pradeepsh2203");
+	if (valid === undefined) {
+		console.log("User Not Found");
 	} else {
-		console.log("Username exists choose another one");
-		console.log(userDetail);
+		console.log(valid);
 	}
 };
 
 test();
-module.exports = { isUsernameValid, hashPassword };
+
+module.exports = { isUsernameValid, hashPassword, isMaildValid };
