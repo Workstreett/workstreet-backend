@@ -2,22 +2,15 @@ const pool = require("./db");
 const fs = require("fs");
 require("dotenv").config();
 
-let userDetail = {};
 const isUsernameValid = async (username) => {
 	try {
 		//change table name accordingly
-		let res = await pool.query(
-			"SELECT * FROM wk_table where username = $1",
-			[username]
-		);
-		console.log(res);
-		userDetail = res.rows[0];
-
-		if (userDetail.user_id == undefined) {
-			return true;
-		} else {
-			return false;
-		}
+		let res = await pool.query("SELECT * FROM users where username = $1", [
+			username,
+		]);
+		// console.log(res);
+		await pool.end();
+		return res.rows[0];
 	} catch (err) {
 		throw Error("Sorry the database can't be connected right now");
 	}
@@ -52,14 +45,14 @@ const isMaildValid = async (mailId) => {
 };
 
 const test = async () => {
-	var valid = await isMaildValid("pradeeps.asdasafsdj.@iiitp.ac.in");
-	if (valid) {
-		console.log("The mail id is valid");
+	var valid = await isUsernameValid("pradeepsh2203");
+	if (valid === undefined) {
+		console.log("User Not Found");
 	} else {
-		console.log("The mail id is not valid");
+		console.log(valid);
 	}
 };
 
 test();
 
-module.exports = { isUsernameValid, hashPassword };
+module.exports = { isUsernameValid, hashPassword, isMaildValid };
