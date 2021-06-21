@@ -1,4 +1,5 @@
 const validPassword = (password) => {
+	console.log(`batao bro ${password} `);
 	if (typeof password != "string") {
 		throw Error("Password is not a string");
 	}
@@ -23,4 +24,5 @@ const test = () => {
 		console.log("password not satisfy conditions");
 	}
 };
-test();
+//test();
+module.exports={validPassword}

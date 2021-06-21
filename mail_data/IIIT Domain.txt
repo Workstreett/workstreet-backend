@@ -7,7 +7,7 @@
 @iiitkottayam.ac.in
 @iiitm.ac.in
 @iiitn.ac.in
-@iiitp.ac.in
+@iiitp.ac.in   
 @iiitranchi.ac.in
 @iiitsonepat.ac.in
 @iiitsurat.ac.in
