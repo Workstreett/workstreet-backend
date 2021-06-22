@@ -8,5 +8,5 @@ CREATE TABLE users(
     year VARCHAR(20),
     officialmailid VARCHAR(255),
     institute VARCHAR(255),
-    verified BOOLEAN
+    verified BOOLEAN DEFAULT FALSE,
 );

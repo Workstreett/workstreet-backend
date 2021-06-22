@@ -1,3 +1,5 @@
+var validation = require("./validation.js");
+
 const validPassword = (password) => {
 	console.log(`batao bro ${password} `);
 	if (typeof password != "string") {
@@ -15,6 +17,22 @@ const validPassword = (password) => {
 		return false;
 	}
 };
+
+const signUpChecker = async (obj) => {
+	try {
+		let temp = await validation.isUsernameValid(obj.username);
+		console.log(obj.officialmailid);
+		let temp2 = await validation.isMaildValid(obj.officialmailid);
+		console.log(obj.password);
+		if (temp !== undefined) return -1;
+		if (!validPassword(obj.password)) return -2;
+		if (!temp2) return -3;
+		return 1;
+	} catch (err) {
+		throw Error("katgaya");
+	}
+};
+
 //simply for testing
 const test = () => {
 	valid = validPassword(1231231);
@@ -25,4 +43,4 @@ const test = () => {
 	}
 };
 //test();
-module.exports={validPassword}
+module.exports = { validPassword, signUpChecker };
