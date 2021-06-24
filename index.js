@@ -4,6 +4,8 @@ var pool = require("./db");
 var validation = require("./validation");
 var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
+const { prototype } = require("nodemailer/lib/dkim");
+const e = require("express");
 require("dotenv").config();
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
@@ -60,6 +62,34 @@ app.get("/verify/:jwt", (req, res) => {
 		}
 	);
 	res.send(user_data);
+});
+
+app.post("/login", async (req,res) =>{
+    try{
+		var login_items=req.body;
+		var finder = await pool.query(`SELECT * FROM ${process.env.db_table} WHERE username=$1`,[login_items.username]);
+		if(finder.rows[0]==undefined) console.log(`user with name ${login_items.username} does not exist`);
+        else if(!finder.rows[0].verified) console.log(`user with name ${login_items.username} not verified`);
+		else{
+			let hashedPsswd = validation.hashPassword(login_items.password);
+			if(hashedPsswd==finder.rows[0].password){ 
+				var token = jwt.sign(finder.rows[0], process.env.ACCESS_TOKEN_SECRET, {
+					expiresIn: "15 days",
+				});
+				token = endpoint.encrypt(token);
+				console.log(token);
+				console.log(`user with name ${login_items.username} correct password`);
+				
+			}
+            else console.log(`user with name ${login_items.username} wrong password`)
+		}
+		res.json(finder);
+	}
+    catch(err){
+		console.error(err.message);
+	}
+
+
 });
 
 app.get("/", (req, res) => {
