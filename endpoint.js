@@ -58,7 +58,7 @@ const mailer = (user_details) => {
 		expiresIn: "1 days",
 	});
 	token = encrypt(token);
-	// console.log(token);
+	//console.log(token);
 
 	let mail_body = {
 		from: `Team Workstreet 🤖 <${process.env.Mail_Id}>`,
