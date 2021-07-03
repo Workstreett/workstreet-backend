@@ -27,7 +27,7 @@ const decrypt = (cryptedText) => {
 };
 
 const validPassword = (password) => {
-	console.log(`batao bro ${password} `);
+	// console.log(`batao bro ${password} `);
 	if (typeof password != "string") {
 		throw Error("Password is not a string");
 	}
@@ -75,7 +75,7 @@ const mailer = (user_details) => {
 			console.log(err.message);
 			throw Error("The mail can't be send");
 		} else {
-			console.log(data);
+			console.log("Mail Sent!!!");
 		}
 	});
 	// token = decrypt(token);
@@ -85,9 +85,7 @@ const mailer = (user_details) => {
 const signUpChecker = async (obj) => {
 	try {
 		let temp = await validation.isUsernameValid(obj.username);
-		console.log(obj.officialmailid);
 		let temp2 = await validation.isMaildValid(obj.officialmailid);
-		console.log(obj.password);
 		if (temp !== undefined) return -1;
 		if (!validPassword(obj.password)) return -2;
 		if (!temp2) return -3;
