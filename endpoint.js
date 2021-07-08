@@ -47,7 +47,8 @@ const validPassword = (password) => {
 const mailer = (user_details) => {
 	//  Step-1 create a transporter
 	const transporter = nodemailer.createTransport({
-		service: "gmail",
+		host: "smtp.workstreet.tech",
+		port: 25,
 		auth: {
 			user: process.env.Mail_Id,
 			pass: process.env.Mail_Passwd,
