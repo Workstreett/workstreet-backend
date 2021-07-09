@@ -49,6 +49,9 @@ const mailer = (user_details) => {
 	const transporter = nodemailer.createTransport({
 		host: "smtp.workstreet.tech",
 		port: 25,
+		secure: false,
+		requireTLS: false,
+		ignoreTLS: true,
 		auth: {
 			user: process.env.Mail_Id,
 			pass: process.env.Mail_Passwd,
@@ -67,7 +70,7 @@ const mailer = (user_details) => {
 		subject: "Verify your workstreet account",
 		html: `<h1>Hello from Team Workstreet</h1>
 		<p>Please visit the link given below to verify your account: </p>
-		<p>http://localhost:3000/verify/${token}</p>`,
+		<p>https://workstreet.herokuapp.com/verify/${token}</p>`,
 	};
 
 	// Step-3 send the mail............................
