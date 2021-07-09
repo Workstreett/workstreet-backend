@@ -7,6 +7,9 @@ const pool = new Pool({
 	database: process.env.db_database,
 	password: process.env.db_passwd,
 	port: process.env.db_port,
+	ssl: {
+		rejectUnauthorized: false,
+	},
 });
 
 // pool.query("SELECT * from users", (err, res) => {
