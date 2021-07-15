@@ -40,7 +40,9 @@ const searchForDomain = async (filename, domain) => {
 };
 
 const isMaildValid = async (mailId) => {
-	let ind = mailId.indexOf("@");
+	let ind = mailId.indexOf("@"); 
+	console.log(ind);
+	console.log(mailId.substring(ind));
 	if (ind == -1) return false;
 	mailId = mailId.substring(ind);
 	console.log(mailId);
