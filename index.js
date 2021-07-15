@@ -30,6 +30,7 @@ app.post("/signup", async (req, res) => {
 			);
 			endpoint.mailer(newMember.rows[0]);
 			res.json(newMember);
+			
 		} else {
 			if (checker == -1) console.log("chosen username already exists");
 			else if (checker == -2) console.log("password rules not satisfied");
