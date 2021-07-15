@@ -24,12 +24,12 @@ const hashPassword = (passwd) => {
 
 const searchForDomain = async (filename, domain) => {
 	try {
-		console.log(__dirname);
+		// console.log(__dirname);
 		var domains = [];
 		domains = fs
 			.readFileSync(__dirname + filename, "utf-8")
 			.toString()
-			.split("\r\n");
+			.split("\n");
 		for (let i = 0; i < domains.length; i++) {
 			if (domains[i].localeCompare(domain) === 0) return true;
 		}
@@ -40,12 +40,11 @@ const searchForDomain = async (filename, domain) => {
 };
 
 const isMaildValid = async (mailId) => {
-	let ind = mailId.indexOf("@"); 
-	console.log(ind);
-	console.log(mailId.substring(ind));
+	let ind = mailId.indexOf("@");
+	// console.log(ind);
+	// console.log(mailId.substring(ind));
 	if (ind == -1) return false;
 	mailId = mailId.substring(ind);
-	console.log(mailId);
 	let found = await searchForDomain("/mail_data/IIT_Domains.txt", mailId);
 	if (found == true) return true;
 	found = await searchForDomain("/mail_data/IIIT Domain.txt", mailId);
