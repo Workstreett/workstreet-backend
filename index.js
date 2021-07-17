@@ -1,20 +1,20 @@
 var express = require("express");
 var app = express();
 var pool = require("./db");
+var cors = require("cors");
 var validation = require("./validation");
 var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
-const { response } = require("express");
 require("dotenv").config();
 
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.post("/signup", async (req, res) => {
 	try {
 		var signUp_items = req.body;
 		var checker = await endpoint.signUpChecker(signUp_items);
-		res.set("Access-Control-Allow-Origin", "*");
 		// checker returns -1 for not valid  username, -2 for not valid password,-3 for not eligible mail id,1 if acceptable
 		if (checker == 1) {
 			let hashedPsswd = validation.hashPassword(signUp_items.password);
