@@ -29,17 +29,15 @@ app.post("/signup", async (req, res) => {
 				]
 			);
 			endpoint.mailer(newMember.rows[0]);
-			res.json(newMember);
-			
+			res.send("signedUp");
 		} else {
-			if (checker == -1) console.log("chosen username already exists");
-			else if (checker == -2) console.log("password rules not satisfied");
-			else if (checker == -3) console.log("not eligible mail id");
-			res.send(`sorry ${checker}`);
+			if (checker == -1) res.send("u");
+			else if (checker == -2) res.send("p");
+			else if (checker == -3) res.send("m");
 		}
 	} catch (err) {
 		console.error(err.message);
-		res.send("error2");
+		res.send("error");
 	}
 });
 
