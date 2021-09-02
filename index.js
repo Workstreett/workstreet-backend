@@ -32,7 +32,7 @@ app.post("/signup", async (req, res) => {
 			);
 			endpoint.mailer(newMember.rows[0]);
 			console.log(res.headersSent);
-			console.log("SenT!!!");
+			// console.log("SenT!!!");
 			res.send("signedUp");
 		} else {
 			if (checker == -1) res.send("u");
@@ -99,9 +99,9 @@ app.post("/login", async (req, res) => {
 				);
 		}
 		if (!verified) {
-			res.send("Not Verified");
+			res.send("V");
 		} else if (token == undefined) {
-			res.send("Username and Password not valid");
+			res.send("U");
 		} else {
 			res.json(token);
 		}
