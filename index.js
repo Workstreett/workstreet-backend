@@ -114,18 +114,18 @@ app.post("/auth", (req, res) => {
 	try {
 		let token = req.body.auth_token;
 		if (token == undefined) {
-			res.send("You don't have any token");
+			res.send("No");
 			return 0;
 		}
 		token = endpoint.decrypt(token);
 		let data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 		if (data.user_id != undefined) {
-			res.send("Token_Validated");
+			res.send("Yes");
 		} else {
-			res.send("Token_Invalid");
+			res.send("No");
 		}
 	} catch (err) {
-		res.send("Either you messed up the token or your token has expired");
+		res.send("No");
 		console.log(err);
 	}
 });
