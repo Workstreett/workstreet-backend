@@ -1,12 +1,12 @@
 @iitbhu.ac.in
 @itbhu.ac.in
 @iitbhilai.ac.in
-@iitbbs.ac.in
 @iitb.ac.in
 @iitdh.ac.in
 @iitd.ac.in
 @iitgn.ac.in
 @iitgoa.ac.in
+@iitbbs.ac.in
 @iitg.ernet.in
 @iith.ac.in
 @iitism.ac.in

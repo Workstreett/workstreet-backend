@@ -1,8 +1,8 @@
-@iiitbh.ac.in
 @iiita.ac.in
 @iiitdm.ac.in
 @iiitg.ac.in
 @iiitdmj.ac.in
+@iiitbh.ac.in
 @iiitk.ac.in
 @iiitkottayam.ac.in
 @iiitm.ac.in
