@@ -103,7 +103,10 @@ app.post("/login", async (req, res) => {
 		} else if (token == undefined) {
 			res.send("U");
 		} else {
-			res.json(token);
+			let details = finder.rows[0];
+			delete details["password"];
+			details.authToken = token;
+			res.json(details);
 		}
 	} catch (err) {
 		console.error(err.message);
@@ -127,6 +130,34 @@ app.post("/auth", (req, res) => {
 	} catch (err) {
 		res.send("No");
 		console.log(err);
+	}
+});
+app.post("/user", (req, res) => {
+	try {
+		let user = req.body;
+		if (user.user_id === undefined) {
+			res.send("The User can't be updated");
+			return;
+		}
+		pool.query(
+			`UPDATE ${process.env.db_table} SET fullname=$1, branch=$2, year=$3, institute=$4 WHERE user_id=$5`,
+			[
+				user.fullname,
+				user.branch,
+				user.year,
+				user.institute,
+				user.user_id,
+			],
+			(err, req) => {
+				if (err) {
+					console.log(err.message);
+				}
+				console.log(req.rows);
+				res.send("Updated the user");
+			}
+		);
+	} catch (err) {
+		res.send("Srry The user can't be updated");
 	}
 });
 
