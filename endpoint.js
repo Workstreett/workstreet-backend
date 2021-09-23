@@ -44,7 +44,7 @@ const validPassword = (password) => {
 	}
 };
 
-const mailer = (user_details) => {
+const mailer = async (user_details) => {
 	//  Step-1 create a transporter
 	const transporter = nodemailer.createTransport({
 		host: "smtp.workstreet.tech",
@@ -63,7 +63,6 @@ const mailer = (user_details) => {
 	});
 	token = encrypt(token);
 	//console.log(token);
-
 	let mail_body = {
 		from: `Team Workstreet 🤖 <${process.env.Mail_Id}>`,
 		to: `${user_details.officialmailid}`,
@@ -74,14 +73,12 @@ const mailer = (user_details) => {
 	};
 
 	// Step-3 send the mail............................
-	transporter.sendMail(mail_body, (err, data) => {
-		if (err) {
-			console.log(err.message);
-			throw Error("The mail can't be send");
-		} else {
-			console.log("Mail Sent!!!");
-		}
-	});
+	try {
+		let info = await transporter.sendMail(mail_body);
+		console.log("mail Sent", info.messageId);
+	} catch (err) {
+		throw Error("Mail can't be send");
+	}
 	// token = decrypt(token);
 	// console.log(token);
 };
