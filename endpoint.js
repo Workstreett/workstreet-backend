@@ -47,11 +47,7 @@ const validPassword = (password) => {
 const mailer = async (user_details) => {
 	//  Step-1 create a transporter
 	const transporter = nodemailer.createTransport({
-		host: "smtp.workstreet.tech",
-		port: 25,
-		secure: false,
-		requireTLS: false,
-		ignoreTLS: true,
+		service: "SendPulse",
 		auth: {
 			user: process.env.Mail_Id,
 			pass: process.env.Mail_Passwd,
@@ -77,7 +73,7 @@ const mailer = async (user_details) => {
 		let info = await transporter.sendMail(mail_body);
 		console.log("mail Sent", info.messageId);
 	} catch (err) {
-		throw Error("Mail can't be send");
+		throw err;
 	}
 	// token = decrypt(token);
 	// console.log(token);

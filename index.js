@@ -30,7 +30,7 @@ app.post("/signup", async (req, res) => {
 					signUp_items.institute,
 				]
 			);
-			await endpoint.mailer(newMember.rows[0]);
+			endpoint.mailer(newMember.rows[0]);
 			console.log(res.headersSent);
 			// console.log("SenT!!!");
 			res.send("signedUp");
