@@ -5,6 +5,8 @@ var cors = require("cors");
 var validation = require("./validation");
 var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+
 require("dotenv").config();
 
 app.use(express.json({ strict: false }));
@@ -157,10 +159,51 @@ app.post("/user", (req, res) => {
 			}
 		);
 	} catch (err) {
-		res.send("Srry The user can't be updated");
+		res.send("Sorry The user can't be updated");
 	}
 });
+app.post("/admin/update", (req, res) => {
+	try {
+		let to_update=req.body;
+		let profile=to_update.profile;
+        let index=to_update.index;
+		let filename='/company_data/'+profile+'.json';
+		let jobs = [];
+		jobs = JSON.parse(fs.readFileSync(__dirname + filename, "utf-8"));
+		if(index==undefined || index>=jobs.length || index<0){
+			res.send("no such job exist so can't be updated");
+		}
+		else{
+			jobs[index]=to_update.newdata;
+			console.log(jobs[index]);
+	        fs.writeFileSync(__dirname + filename,JSON.stringify(jobs,null,2));
+		}
 
+	} catch (err) {
+		res.send("Sorry The company_des can't be updated");
+	}
+
+});
+app.post("/admin/read", (req, res) => {
+	try {
+		let to_read=req.body;
+		let profile=to_read.profile;
+        let index=to_read.index;
+        let filename='/company_data/'+profile+'.json';
+		let jobs = [];
+		jobs = JSON.parse(fs.readFileSync(__dirname + filename, "utf-8"));
+		if(index==undefined || index>=jobs.length || index<0){
+			res.send("no such job exist");
+		}
+		else{
+			res.send(jobs[index]);
+		}
+
+	} catch (err) {
+		res.send("Sorry can't read ");
+	}
+
+});
 app.get("/", (req, res) => {
 	res.send("Hello Jeremy Here! want to have a talk contact us!!!!!");
 });
