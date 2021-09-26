@@ -10,7 +10,7 @@ require("dotenv").config();
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
+app.use('/uploads',express.static('uploads'));
 app.post("/signup", async (req, res) => {
 	try {
 		var signUp_items = req.body;
