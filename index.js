@@ -173,7 +173,27 @@ app.post("/user", upload.none(), (req, res) => {
 			}
 		);
 	} catch (err) {
-		res.send("Srry The user can't be updated");
+		res.send("Sorry The user can't be updated");
+	}
+});
+app.post("/admin/update", upload.single("image"), (req, res) => {
+	try {
+		let to_update = req.body;
+		let profile = to_update.section;
+		let index = to_update.id;
+		let filename = "./company_data/" + profile + ".json";
+		let jobs = [];
+		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
+		if (index == undefined || index >= jobs.length || index < 0) {
+			res.send("no such job exist so can't be updated");
+		} else {
+			jobs[index] = to_update.newdata;
+			console.log(jobs[index]);
+			fs.writeFileSync(filename, JSON.stringify(jobs, null, 2));
+			res.send("Updated!!!");
+		}
+	} catch (err) {
+		res.send("Sorry The company_des can't be updated");
 	}
 });
 
@@ -226,6 +246,19 @@ app.post("/admin/delete", upload.none(), (req, res) => {
 	}
 });
 
+app.post("/admin/read", upload.none(), (req, res) => {
+	try {
+		let to_read = req.body;
+		let profile = to_read.section;
+		let filename = "./company_data/" + profile + ".json";
+		let jobs = [];
+		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
+		res.send(jobs);
+	} catch (err) {
+		console.log(err.message);
+		res.send("Sorry can't read ");
+	}
+});
 app.get("/", (req, res) => {
 	res.send("Hello Jeremy Here! want to have a talk contact us!!!!!");
 });
