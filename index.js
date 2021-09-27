@@ -188,17 +188,10 @@ app.post("/admin/read", (req, res) => {
 	try {
 		let to_read=req.body;
 		let profile=to_read.profile;
-        let index=to_read.index;
         let filename='/company_data/'+profile+'.json';
 		let jobs = [];
 		jobs = JSON.parse(fs.readFileSync(__dirname + filename, "utf-8"));
-		if(index==undefined || index>=jobs.length || index<0){
-			res.send("no such job exist");
-		}
-		else{
-			res.send(jobs[index]);
-		}
-
+		res.send(jobs);
 	} catch (err) {
 		res.send("Sorry can't read ");
 	}
