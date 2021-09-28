@@ -1,3 +1,4 @@
+const fs = require("fs");
 var express = require("express");
 var app = express();
 var pool = require("./db");
@@ -5,15 +6,27 @@ var cors = require("cors");
 var validation = require("./validation");
 var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
+const multer = require("multer");
 
 require("dotenv").config();
 
+const multerConfg = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, "./uploads/");
+	},
+	filename: (req, file, cb) => {
+		var name = file.originalname;
+		var ext = name.substring(name.indexOf("."));
+		cb(null, `${req.body.company}_${req.body.title}${ext}`);
+	},
+});
+const upload = multer({ storage: multerConfg });
 app.use(express.json({ strict: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use('/uploads',express.static('uploads'));
-app.post("/signup", async (req, res) => {
+app.use("/uploads", express.static("uploads"));
+
+app.post("/signup", upload.none(), async (req, res) => {
 	try {
 		var signUp_items = req.body;
 		var checker = await endpoint.signUpChecker(signUp_items);
@@ -47,7 +60,7 @@ app.post("/signup", async (req, res) => {
 	}
 });
 
-app.get("/verify/:jwt", (req, res) => {
+app.get("/verify/:jwt", upload.none(), (req, res) => {
 	token = req.params.jwt;
 	token = endpoint.decrypt(token);
 	user_data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -65,7 +78,7 @@ app.get("/verify/:jwt", (req, res) => {
 	res.send(user_data);
 });
 
-app.post("/login", async (req, res) => {
+app.post("/login", upload.none(), async (req, res) => {
 	try {
 		var token = undefined;
 		var verified = true;
@@ -115,7 +128,7 @@ app.post("/login", async (req, res) => {
 	}
 });
 
-app.post("/auth", (req, res) => {
+app.post("/auth", upload.none(), (req, res) => {
 	try {
 		let token = req.body.auth_token;
 		if (token == undefined) {
@@ -134,7 +147,8 @@ app.post("/auth", (req, res) => {
 		console.log(err);
 	}
 });
-app.post("/user", (req, res) => {
+
+app.post("/user", upload.none(), (req, res) => {
 	try {
 		let user = req.body;
 		if (user.user_id === undefined) {
@@ -162,40 +176,88 @@ app.post("/user", (req, res) => {
 		res.send("Sorry The user can't be updated");
 	}
 });
-app.post("/admin/update", (req, res) => {
+app.post("/admin/update", upload.single("image"), (req, res) => {
 	try {
-		let to_update=req.body;
-		let profile=to_update.profile;
-        let index=to_update.index;
-		let filename='/company_data/'+profile+'.json';
+		let to_update = req.body;
+		let profile = to_update.section;
+		let index = to_update.id;
+		let filename = "./company_data/" + profile + ".json";
 		let jobs = [];
-		jobs = JSON.parse(fs.readFileSync(__dirname + filename, "utf-8"));
-		if(index==undefined || index>=jobs.length || index<0){
+		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
+		if (index == undefined || index >= jobs.length || index < 0) {
 			res.send("no such job exist so can't be updated");
-		}
-		else{
-			jobs[index]=to_update.newdata;
+		} else {
+			jobs[index] = to_update.newdata;
 			console.log(jobs[index]);
-	        fs.writeFileSync(__dirname + filename,JSON.stringify(jobs,null,2));
+			fs.writeFileSync(filename, JSON.stringify(jobs, null, 2));
+			res.send("Updated!!!");
 		}
-
 	} catch (err) {
 		res.send("Sorry The company_des can't be updated");
 	}
-
 });
-app.post("/admin/read", (req, res) => {
+
+app.post("/admin/create", upload.single("image"), (req, res) => {
+	// obj includes section,title,company,desc,extra,url,tags
 	try {
-		let to_read=req.body;
-		let profile=to_read.profile;
-        let filename='/company_data/'+profile+'.json';
+		var obj = req.body;
+		var data = require(`./company_data/${obj.section}.json`);
+		data.push({
+			title: obj.title,
+			company: obj.company,
+			desc: obj.desc,
+			extra: obj.extra,
+			url: obj.url,
+			tags: obj.tags,
+			img: req.file.filename,
+		});
+		fs.writeFileSync(
+			`./company_data/${obj.section}.json`,
+			JSON.stringify(data)
+		);
+
+		res.send("Added a Post");
+	} catch (err) {
+		console.log(err.message);
+		res.send("Error");
+	}
+});
+
+app.post("/admin/delete", upload.none(), (req, res) => {
+	// req.body includes the id of the object,section to be deleted.
+	try {
+		console.log(req.body);
+		const ind = req.body.id;
+		var data = require(`./company_data/${req.body.section}.json`);
+		if (ind >= data.length) {
+			res.send("Error");
+			return;
+		}
+		fs.unlinkSync(`./uploads/${data[ind].img}`);
+		data.splice(ind, 1);
+		fs.writeFileSync(
+			`./company_data/${req.body.section}.json`,
+			JSON.stringify(data)
+		);
+		res.send("Deleted!!!");
+	} catch (err) {
+		console.log(err.message);
+		res.send("Error");
+	}
+});
+
+app.post("/admin/read", upload.none(), (req, res) => {
+	try {
+		let to_read = req.body;
+		let profile = to_read.section;
+		let filename = "./company_data/" + profile + ".json";
 		let jobs = [];
-		jobs = JSON.parse(fs.readFileSync(__dirname + filename, "utf-8"));
+		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
 		res.send(jobs);
 	} catch (err) {
+		console.log(err.message);
 		res.send("Sorry can't read ");
 	}
-
 });
 app.get("/", (req, res) => {
 	res.send("Hello Jeremy Here! want to have a talk contact us!!!!!");
