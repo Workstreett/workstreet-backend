@@ -46,5 +46,13 @@
 		"url": "http://localhost:3000/",
 		"tags": "#paid#sorted#2 months",
 		"img": "Bajaj_Mechanical Engineer.jpg"
+	},
+	{
+		"title": "kunal ds",
+		"company": "Bajaj",
+		"desc": "Blah Blah",
+		"url": "http://localhost:3000/",
+		"tags": "#paid#sorted#2 months",
+		"img": "Bajaj_Mechanical Engineer.jpg"
 	}
 ]
