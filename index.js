@@ -256,7 +256,7 @@ app.post("/admin/read", upload.none(), (req, res) => {
 		res.send(jobs);
 	} catch (err) {
 		console.log(err.message);
-		res.send("Sorry can't read ");
+		res.send([]);
 	}
 });
 app.get("/", (req, res) => {
