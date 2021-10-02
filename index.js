@@ -181,7 +181,7 @@ app.post("/admin/update", upload.single("image"), (req, res) => {
 		let to_update = req.body;
 		let profile = to_update.section;
 		let index = to_update.id;
-		let filename = "./company_data/" + profile + ".json";
+		let filename = "./company_data/" + profile.toLowerCase() + ".json";
 		let jobs = [];
 		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
 		if (index == undefined || index >= jobs.length || index < 0) {
@@ -248,9 +248,10 @@ app.post("/admin/delete", upload.none(), (req, res) => {
 
 app.post("/admin/read", upload.none(), (req, res) => {
 	try {
-		let to_read = req.body;
+		let to_read = JSON.parse(req.body);
 		let profile = to_read.section;
-		let filename = "./company_data/" + profile + ".json";
+		let filename = "./company_data/" + profile.toLowerCase() + ".json";
+		console.log(filename)
 		let jobs = [];
 		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
 		res.send(jobs);
