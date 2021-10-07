@@ -7,6 +7,7 @@ var validation = require("./validation");
 var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
+const funcs = require("./helperFunctions");
 
 require("dotenv").config();
 
@@ -16,7 +17,7 @@ const multerConfg = multer.diskStorage({
 	},
 	filename: (req, file, cb) => {
 		var name = file.originalname;
-		var ext = name.substring(name.indexOf("."));
+		var ext = name.substring(name.lastIndexOf("."));
 		cb(null, `${req.body.company}_${req.body.title}${ext}`);
 	},
 });
@@ -176,21 +177,48 @@ app.post("/user", upload.none(), (req, res) => {
 		res.send("Sorry The user can't be updated");
 	}
 });
+
 app.post("/admin/update", upload.single("image"), (req, res) => {
 	try {
-		let to_update = req.body;
-		let profile = to_update.section;
-		let index = to_update.id;
-		let filename = "./company_data/" + profile.toLowerCase() + ".json";
-		let jobs = [];
-		jobs = JSON.parse(fs.readFileSync(filename, "utf-8"));
-		if (index == undefined || index >= jobs.length || index < 0) {
-			res.send("no such job exist so can't be updated");
+		if (req.body.oldSection != req.body.section) {
+			const fileName = req.body.oldSection.toLowerCase();
+			const newFileName = req.body.section.toLowerCase();
+			const ind = req.body.id;
+			const imageName = funcs.deleteImageIfRequired(
+				fileName,
+				ind,
+				req.body.company,
+				req.body.title,
+				req.file
+			);
+			funcs.deletePost(fileName, ind);
+			funcs.creatPost(newFileName, req.body, imageName);
 		} else {
-			jobs[index] = to_update.newdata;
-			console.log(jobs[index]);
-			fs.writeFileSync(filename, JSON.stringify(jobs, null, 2));
-			res.send("Updated!!!");
+			const fileName = req.body.section.toLowerCase();
+			const ind = req.body.id;
+			const imageName = funcs.deleteImageIfRequired(
+				fileName,
+				ind,
+				req.body.company,
+				req.body.title,
+				req.file
+			);
+			var data = require(fileName);
+			var obj = req.body;
+			data[ind] = {
+				title: obj.title,
+				company: obj.company,
+				desc: obj.desc,
+				extra: obj.extra,
+				url: obj.url,
+				tags: obj.tags,
+				compUrl: obj.compUrl,
+				img: imageName,
+			};
+			fs.writeFileSync(
+				`./company_data/${fileName}.json`,
+				JSON.stringify(data)
+			);
 		}
 	} catch (err) {
 		res.send("Sorry The company_des can't be updated");
@@ -201,21 +229,8 @@ app.post("/admin/create", upload.single("image"), (req, res) => {
 	// obj includes section,title,company,desc,extra,url,tags
 	try {
 		var obj = req.body;
-		var data = require(`./company_data/${obj.section}.json`);
-		data.push({
-			title: obj.title,
-			company: obj.company,
-			desc: obj.desc,
-			extra: obj.extra,
-			url: obj.url,
-			tags: obj.tags,
-			img: req.file.filename,
-		});
-		fs.writeFileSync(
-			`./company_data/${obj.section}.json`,
-			JSON.stringify(data)
-		);
-
+		const file_name = req.body.section.toLowerCase();
+		funcs.creatPost(file_name, obj, req.file.filename);
 		res.send("Added a Post");
 	} catch (err) {
 		console.log(err.message);
@@ -228,17 +243,7 @@ app.post("/admin/delete", upload.none(), (req, res) => {
 	try {
 		console.log(req.body);
 		const ind = req.body.id;
-		var data = require(`./company_data/${req.body.section}.json`);
-		if (ind >= data.length) {
-			res.send("Error");
-			return;
-		}
-		fs.unlinkSync(`./uploads/${data[ind].img}`);
-		data.splice(ind, 1);
-		fs.writeFileSync(
-			`./company_data/${req.body.section}.json`,
-			JSON.stringify(data)
-		);
+		funcs.deletePost(req.body.section.toLowerCase(), ind);
 		res.send("Deleted!!!");
 	} catch (err) {
 		console.log(err.message);
