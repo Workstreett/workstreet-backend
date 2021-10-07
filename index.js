@@ -191,7 +191,7 @@ app.post("/admin/update", upload.single("image"), (req, res) => {
 				req.body.title,
 				req.file
 			);
-			funcs.deletePost(fileName, ind);
+			funcs.deletePost(fileName, ind, false);
 			funcs.creatPost(newFileName, req.body, imageName);
 		} else {
 			const fileName = req.body.section.toLowerCase();
@@ -220,6 +220,7 @@ app.post("/admin/update", upload.single("image"), (req, res) => {
 				JSON.stringify(data)
 			);
 		}
+		res.send("Updated Data");
 	} catch (err) {
 		res.send("Sorry The company_des can't be updated");
 	}
@@ -241,9 +242,8 @@ app.post("/admin/create", upload.single("image"), (req, res) => {
 app.post("/admin/delete", upload.none(), (req, res) => {
 	// req.body includes the id of the object,section to be deleted.
 	try {
-		console.log(req.body);
 		const ind = req.body.id;
-		funcs.deletePost(req.body.section.toLowerCase(), ind);
+		funcs.deletePost(req.body.section.toLowerCase(), ind, true);
 		res.send("Deleted!!!");
 	} catch (err) {
 		console.log(err.message);
