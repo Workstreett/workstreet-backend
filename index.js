@@ -8,6 +8,7 @@ var endpoint = require("./endpoint");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const funcs = require("./helperFunctions");
+var sendpulse = require("sendpulse-api");
 
 require("dotenv").config();
 
@@ -266,6 +267,30 @@ app.post("/admin/read", upload.none(), (req, res) => {
 });
 app.get("/", (req, res) => {
 	res.send("Hello Jeremy Here! want to have a talk contact us!!!!!");
+});
+
+app.post("/subscribe", (req, res) => {
+	try {
+		var API_USER_ID = "1c980e8ed2e2ed9168b515b4a68f93a8";
+		var API_SECRET = "a4583b3ab03f5107ceae1bca871e4380";
+		var TOKEN_STORAGE = "./tmp/";
+
+		sendpulse.init(
+			API_USER_ID,
+			API_SECRET,
+			TOKEN_STORAGE,
+			function (token) {
+				var responseLogger = function (data) {
+					console.log(data);
+				};
+				sendpulse.addEmails(responseLogger, 114508, [req.body.email]);
+			}
+		);
+		res.send("Success");
+	} catch (err) {
+		res.send(err.message);
+		console.log(err.message);
+	}
 });
 
 console.log("I am listening sir");
